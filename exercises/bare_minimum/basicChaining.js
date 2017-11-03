@@ -10,12 +10,24 @@
 
 var fs = require('fs');
 var Promise = require('bluebird');
-
-
+var GitHubHelpers = require('./promisification.js'); 
+var additionalHelpers = require('./promiseConstructor.js'); 
 
 var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath) {
-  // TODO
+  return additionalHelpers.pluckFirstLineFromFileAsync(readFilePath)
+    .then(function(profile) {
+      console.log('we have found our name and it is: ', profile);
+      GitHubHelpers.getGitHubProfileAsync(profile)
+      .then(function(profile) {
+        additionalHelpers.writeToFileAsync(writeFilePath, profile);
+      }); 
+    });
 };
+      // getGitHubProfileAsync('someRealUser')
+      //   .then(function(profile) {
+      //     expect(profile.id).to.equal(12345);
+      //     done();
+      //   })
 
 // Export these functions so we can test them
 module.exports = {
